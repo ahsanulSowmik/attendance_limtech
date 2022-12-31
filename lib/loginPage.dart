@@ -58,12 +58,12 @@ class _LoginPageState extends State<LoginPage> {
     Map data = {'email': email, 'password': pass};
     var jsonResponse = null;
     var response = await http.post(
-        Uri.parse('https://limtech-erp-backend.ldlerp.com/api/login'),
+        Uri.parse('https://erp.ldlerp.com/backend/public/api/login'),
         body: data);
     toast(json.decode(response.body));
     if (response.statusCode == 200) {
       jsonResponse = json.decode(response.body);
-
+      print("login $jsonResponse['token']");
       if (jsonResponse != null) {
         setState(() {
           _isLoading = false;
@@ -83,31 +83,26 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   toast(jsonResponse) {
-    if(jsonResponse['status']== false){
-
+    if (jsonResponse['status'] == false) {
       MotionToast(
-      icon: Icons.no_encryption_gmailerrorred,
-      // color: ,
-      title: Text("Error!!"),
-      description: Text(jsonResponse['message']),
-      position: MotionToastPosition.top,
-      animationType: AnimationType.fromTop, primaryColor: Colors.deepOrange,
-    ).show(context);
-
+        icon: Icons.no_encryption_gmailerrorred,
+        // color: ,
+        title: Text("Error!!"),
+        description: Text(jsonResponse['message']),
+        position: MotionToastPosition.top,
+        animationType: AnimationType.fromTop, primaryColor: Colors.deepOrange,
+      ).show(context);
+    } else {
+      MotionToast(
+        // icon: Icons.no_encryption_gmailerrorred,
+        // color: ,
+        // title: Text("Error!!"),
+        description: Text(jsonResponse['message']),
+        position: MotionToastPosition.top,
+        animationType: AnimationType.fromTop,
+        primaryColor: Color.fromARGB(255, 34, 255, 49),
+      ).show(context);
     }
-    else{
-
-       MotionToast(
-      // icon: Icons.no_encryption_gmailerrorred,
-      // color: ,
-      // title: Text("Error!!"),
-      description: Text(jsonResponse['message']),
-      position: MotionToastPosition.top,
-      animationType: AnimationType.fromTop, primaryColor: Color.fromARGB(255, 34, 255, 49),
-    ).show(context);
-
-    }
-    
   }
 
   Container buttonSection() {

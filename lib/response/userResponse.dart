@@ -31,30 +31,22 @@ class UserResponse {
     SharedPreferences pref = await SharedPreferences.getInstance();
     var token = pref.getString("token");
     String token3 = token.toString();
-    print(token3);
-    String token2 = "194|6tZC5OQedepPaiEBTQQpr3CbqVvVCRbjDY8K2gkc";
+    print("userResponse $token3");
+    // String token2 = "194|6tZC5OQedepPaiEBTQQpr3CbqVvVCRbjDY8K2gkc";
 
-    // var ans = token1;
-    // print(token1.runtimeType);
-    // print("sadasdasdasd $ans ");
-    // print("token1  $ans");
-    // print(getTokenFromSF().toString());
 
     final response = await http.get(
         Uri.parse('https://erp.ldlerp.com/backend/public/api/setting'),
         headers: {
-          'Authorization': 'Bearer 84|KIje4erJ8FdbK2kjB5Aucy0e4voI5MIn3lPz3YCR',
+          'Authorization': 'Bearer $token3',
         });
 
     if (response.statusCode == 200) {
-      // If the server did return a 200 OK response,
-      // then parse the JSON.
-      // print(Album.fromJson(jsonDecode(response.body)));
+
+      print(jsonDecode(response.body));
       return Album.fromJson(jsonDecode(response.body));
     } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
-      // print("token");
+
       throw Exception('Failed to load album');
     }
   }

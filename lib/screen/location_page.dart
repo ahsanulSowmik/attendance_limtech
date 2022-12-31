@@ -10,6 +10,7 @@ import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'package:motion_toast/motion_toast.dart';
 import 'package:motion_toast/resources/arrays.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LocationPage extends StatefulWidget {
   const LocationPage({super.key});
@@ -75,8 +76,6 @@ class _LocationPageState extends State<LocationPage> {
   getLocation() async {
     position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
-    //print(position.longitude); //Output: 80.24599079
-    //print(position.latitude); //Output: 29.6593457
 
     long = position.longitude.toString();
     lat = position.latitude.toString();
@@ -88,15 +87,11 @@ class _LocationPageState extends State<LocationPage> {
     LocationSettings locationSettings = const LocationSettings(
       accuracy: LocationAccuracy.high, //accuracy of the location data
       distanceFilter: 100, //minimum distance (measured in meters) a
-      //device must move horizontally before an update event is generated;
     );
 
     StreamSubscription<Position> positionStream =
         Geolocator.getPositionStream(locationSettings: locationSettings)
             .listen((Position position) {
-      //print(position.longitude); //Output: 80.24599079
-      //print(position.latitude); //Output: 29.6593457
-
       long = position.longitude.toString();
       lat = position.latitude.toString();
 
@@ -107,8 +102,6 @@ class _LocationPageState extends State<LocationPage> {
   }
 
   double calculateDistance(lat1, lon1, lat2, lon2) {
-    // //print(lat1.runtimeType);
-    // //print(lat2.runtimeType);
     var p = 0.017453292519943295;
     var c = cos;
     var a = 0.5 -
@@ -125,22 +118,28 @@ class _LocationPageState extends State<LocationPage> {
 
   postData() async {
     String token = "84|KIje4erJ8FdbK2kjB5Aucy0e4voI5MIn3lPz3YCR";
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    var token1 = pref.getString("token");
+    String token3 = token1.toString();
 
+    
+    print("post $token3");
     final response = await http.post(
       Uri.parse(
           'https://erp.ldlerp.com/backend/public/api/attendance-app-save'),
       headers: <String, String>{
         // 'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Bearer 84|KIje4erJ8FdbK2kjB5Aucy0e4voI5MIn3lPz3YCR',
+        'Authorization': 'Bearer $token3',
       },
       body: {
-        "user_id": userID.toString(),
+        // "user_id": userID.toString(),
         "lat": currentLat,
         "lng": currentLng,
         "distance": distance
       },
     );
-    print("post");
+    print("id");
+    print(userID.toString());
     // Attendance
     var data = json.decode(response.body);
     print(data['message']);
@@ -151,7 +150,8 @@ class _LocationPageState extends State<LocationPage> {
   }
 
   toast(data) {
-    MotionToast(
+   if(data.compareTo("Attendance Successfully Inserted!!")==0){
+     MotionToast(
       icon: Icons.add_reaction,
       // color: ,
       // title: Text("Error!!"),
@@ -159,13 +159,26 @@ class _LocationPageState extends State<LocationPage> {
       position: MotionToastPosition.center,
       animationType: AnimationType.fromTop, primaryColor: Colors.green,
     ).show(context);
+   }
+   else{
+
+    MotionToast(
+      icon: Icons.add_reaction,
+      // color: ,
+      // title: Text("Error!!"),
+      description: Text(data),
+      position: MotionToastPosition.center,
+      animationType: AnimationType.fromTop, primaryColor: Colors.red,
+    ).show(context);
+
+   }
   }
 
   @override
   Widget build(BuildContext context) {
     final ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
-      onPrimary: Colors.black87,
-      primary: Colors.grey[300],
+      // onPrimary: Colors.black87,
+      // primary: Colors.grey[300],
       minimumSize: const Size(88, 36),
       padding: const EdgeInsets.symmetric(horizontal: 16),
       shape: const RoundedRectangleBorder(
@@ -184,8 +197,8 @@ class _LocationPageState extends State<LocationPage> {
             child: ElevatedButton(
               // style: raisedButtonStyle,
               style: ElevatedButton.styleFrom(
-                side: const BorderSide(width: 2.5, color: Colors.grey),
-                // primary: checkIn == true ? Colors.red : Colors.white,
+                side: const BorderSide(width: 2.5, color: Colors.white),
+                primary: Colors.green,
                 // onPrimary: index == 0 ? Colors.white : Colors.black,
                 textStyle: const TextStyle(
                   fontSize: 15,
@@ -204,10 +217,11 @@ class _LocationPageState extends State<LocationPage> {
                 // checkIn = !checkIn;
                 postData();
               },
-              child: const Text(
-                'Attendance',
-                style: TextStyle(fontSize: 50),
-              ),
+              // child: const Text(
+              //   'Attendance',
+              //   style: TextStyle(fontSize: 50),
+              // ),
+              child: Icon(Icons.check_outlined,color: Colors.white,size: 100),
             ),
           );
         } else if (snapshot.hasError) {
