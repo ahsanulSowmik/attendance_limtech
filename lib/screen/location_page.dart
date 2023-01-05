@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:attendance_limtech/model/profileModel.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -116,11 +118,24 @@ class _LocationPageState extends State<LocationPage> {
     return distanceDifferent;
   }
 
+  Future<String?> _getId() async {
+    var deviceInfo = DeviceInfoPlugin();
+    if (Platform.isIOS) {
+      // import 'dart:io'
+      var iosDeviceInfo = await deviceInfo.iosInfo;
+      return iosDeviceInfo.identifierForVendor; // unique ID on iOS
+    } else if (Platform.isAndroid) {
+      var androidDeviceInfo = await deviceInfo.androidInfo;
+      return androidDeviceInfo.androidId; // unique ID on Android
+    }
+  }
+
   postData() async {
     String token = "84|KIje4erJ8FdbK2kjB5Aucy0e4voI5MIn3lPz3YCR";
     SharedPreferences pref = await SharedPreferences.getInstance();
     var token1 = pref.getString("token");
     String token3 = token1.toString();
+    String? deviceId = await _getId();
 
     
     print("post $token3");
@@ -135,7 +150,8 @@ class _LocationPageState extends State<LocationPage> {
         // "user_id": userID.toString(),
         "lat": currentLat,
         "lng": currentLng,
-        "distance": distance
+        "distance": distance,
+        "mac_address" : deviceId
       },
     );
     print("id");

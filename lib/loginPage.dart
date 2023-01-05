@@ -1,7 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:attendance_limtech/main.dart';
 import 'package:attendance_limtech/response/userResponse.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+// import 'package:device_info/device_info.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -69,7 +72,9 @@ class _LoginPageState extends State<LoginPage> {
           _isLoading = false;
         });
         sharedPreferences.setString("token", jsonResponse['token']);
-
+        // _deviceDetails();
+        
+        // print("IDDDDDDDDDD  $deviceId");
         Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(builder: (BuildContext context) => MainPage()),
             (Route<dynamic> route) => false);
@@ -81,6 +86,38 @@ class _LoginPageState extends State<LoginPage> {
     }
     // print(sharedPreferences);
   }
+
+  
+
+  // String deviceName ='';
+  // String deviceVersion ='';
+  // String identifier= '';
+
+  // Future<void>_deviceDetails() async{
+  //   final DeviceInfoPlugin deviceInfoPlugin = new DeviceInfoPlugin();
+  //   try {
+  //     if (Platform.isAndroid) {
+  //       var build = await deviceInfoPlugin.androidInfo;
+  //       setState(() {
+  //         deviceName = build.model;
+  //         deviceVersion = build.version.toString();
+  //         identifier = build.androidId;
+  //       });
+  //       print(deviceName);
+  //       //UUID for Android
+  //     } else if (Platform.isIOS) {
+  //       var data = await deviceInfoPlugin.iosInfo;
+  //       setState(() {
+  //         deviceName = data.name;
+  //         deviceVersion = data.systemVersion;
+  //         identifier = data.identifierForVendor;
+  //       });//UUID for iOS
+  //     }
+  //   } on PlatformException {
+  //     print('Failed to get platform version');
+  //   }
+
+  // }
 
   toast(jsonResponse) {
     if (jsonResponse['status'] == false) {

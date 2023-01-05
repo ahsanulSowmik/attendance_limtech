@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:attendance_limtech/loginPage.dart';
 import 'package:attendance_limtech/screen/location_page.dart';
+// import 'package:device_info/device_info.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() => runApp(MyApp());
@@ -25,6 +29,12 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   late SharedPreferences sharedPreferences;
+
+
+  
+
+
+
 
   @override
   void initState() {
